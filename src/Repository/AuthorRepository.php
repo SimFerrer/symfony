@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Author;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -15,6 +16,26 @@ class AuthorRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Author::class);
     }
+
+    /**
+     * @return QueryBuilder Returns an array of Author objects
+     */
+    public function findByDateOfBirth(array $dates = []): QueryBuilder
+    {
+        $qb = $this->createQueryBuilder('a');
+
+        if (\array_key_exists('start', $dates)) {
+            $qb->andWhere('a.dateOfBirth >= :start')
+                ->setParameter('start', new \DateTimeImmutable($dates['start']));
+        }
+        if (\array_key_exists('end', $dates)) {
+            $qb->andWhere('a.dateOfBirth <= :end')
+                ->setParameter('end', new \DateTimeImmutable($dates['end']));
+        }
+
+        return $qb;
+    }
+
 
     //    /**
     //     * @return Author[] Returns an array of Author objects
