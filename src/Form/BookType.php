@@ -32,14 +32,15 @@ class BookType extends AbstractType
             ->add('pageNumber', IntegerType::class)
             ->add('status', EnumType::class, [
                 'class' => BookStatus::class,
+                'choice_label' => fn(BookStatus $status) => $status->getLabel(),
             ])
             ->add('editor', EntityType::class, [
                 'class' => Editor::class,
-                'choice_label' => 'id',
+                'choice_label' => 'name',
             ])
             ->add('authors', EntityType::class, [
                 'class' => Author::class,
-                'choice_label' => 'id',
+                'choice_label' => 'name',
                 'multiple' => true,
                 'by_reference' => false,
             ])

@@ -1,6 +1,10 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Ajout d'éditeur
+{% set action = app.current_route == 'app_admin_editor_new' ? 'Ajout' : 'Édition' %}
+
+{% block title %}
+	{{ action }}
+	d'éditeur
 {% endblock %}
 
 {% block body %}
@@ -19,7 +23,8 @@
 		</style>
 
 		<div class="example-wrapper">
-			<h1>Ajout d'éditeur</h1>
+			<h1>{{ action }}
+				d'éditeur</h1>
 
 			{{ form_start(form) }}
 			{{ form_row(form.name, {label: 'Nom'}) }}
