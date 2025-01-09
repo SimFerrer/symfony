@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription
+{% endblock %}
+
+{% block body %}
+	<div class="container py-4 px-4">
+		<style>
+			.example-wrapper {
+				margin: 1em auto;
+				max-width: 800px;
+				width: 95%;
+				font: 18px / 1.5 sans-serif;
+			}
+			.example-wrapper code {
+				background: #F5F5F5;
+				padding: 2px 6px;
+			}
+		</style>
+
+		<div class="example-wrapper">
+			<h1>Inscription</h1>
+			<p class="text-muted">Les champs avec une * sont requis</p>
+
+			{{ form_start(registrationForm) }}
+			{{ form_row(registrationForm.email, {label: 'Email *'}) }}
+			{{ form_row(registrationForm.plainPassword, {label: 'Mot de passe *'}) }}
+			{{ form_row(registrationForm.plainPassword, {label: 'Nom d\'utilisateur *'}) }}
+			{{ form_row(registrationForm.firstname, {label: 'Prénom *'}) }}
+			{{ form_row(registrationForm.lastname, {label: 'Nom *'}) }}
+			{{ form_row(registrationForm.roles, {label: 'Roles *'}) }}
+
+			<button type="submit" class="btn btn-primary">S'inscrire</button>
+			{{ form_end(registrationForm) }}
+
+		</div>
+	</div>
+{% endblock %}
