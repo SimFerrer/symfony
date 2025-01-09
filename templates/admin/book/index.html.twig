@@ -6,7 +6,7 @@
 {% block body %}
 	<section class="container px-4">
 		<h1>Liste de livres</h1>
-		<a href="{{ path('app_admin_book_new') }}" class="btn btn-primary">Ajouter un livre</a>
+		<a href="{{ path('app_admin_book_new') }}" class="btn btn-primary m-2">Ajouter un livre</a>
 		<ul class="list-group list-group-flush">
 			{% for book in books %}
 				<div class="card mb-1">

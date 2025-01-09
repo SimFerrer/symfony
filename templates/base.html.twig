@@ -30,9 +30,28 @@
 						<li class="nav-item">
 							<a class="nav-link" href="{{ path('app_book_index') }}">Catalogue</a>
 						</li>
-						<li class="nav-item">
-							<a class="nav-link" href="#">Se connecter</a>
-						</li>
+						{% if app.user %}
+							<li class="nav-item">
+								<a class="nav-link" href="{{ path('app_admin_book') }}">Les livres</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="{{ path('app_admin_author') }}">Les auteurs</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="{{ path('app_admin_editor') }}">Les éditeurs</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="{{ path('app_logout') }}">Se déconnecter</a>
+							</li>
+						{% else %}
+
+							<li class="nav-item">
+								<a class="nav-link" href="{{ path('app_login') }}">Se connecter</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="{{ path('app_register') }}">S'inscrire</a>
+							</li>
+						{% endif %}
 					</ul>
 				</div>
 			</div>

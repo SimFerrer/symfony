@@ -18,12 +18,12 @@ class Book
     #[ORM\Column]
     private ?int $id = null;
 
-    
+
     #[Assert\NotBlank()]
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 
-    
+
     #[Assert\Isbn(type: 'isbn13')]
     #[Assert\NotBlank()]
     #[ORM\Column(length: 255)]
@@ -67,6 +67,11 @@ class Book
      */
     #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'book', orphanRemoval: true)]
     private Collection $comments;
+
+    #[ORM\ManyToOne()]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $createdBy = null;
+
 
     public function __construct()
     {
@@ -229,6 +234,18 @@ class Book
                 $comment->setBook(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCreatedBy(): ?User
+    {
+        return $this->createdBy;
+    }
+
+    public function setCreatedBy(?User $createdBy): static
+    {
+        $this->createdBy = $createdBy;
 
         return $this;
     }

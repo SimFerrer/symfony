@@ -20,6 +20,8 @@
 	<div class="example-wrapper">
 		<h1>Liste d'auteurs</h1>
 
+		<a href="{{ path('app_admin_author_new') }}" class="btn btn-primary m-2">Ajouter un auteur</a>
+
 		<ul class="list-group list-group-flush">
 			{% for author in authors %}
 				<li>

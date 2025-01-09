@@ -6,6 +6,7 @@
 {% block body %}
 	<section class="container px-4">
 		<h1>Liste d'éditeurs</h1>
+		<a href="{{ path('app_admin_editor_new') }}" class="btn btn-primary m-2">Ajouter un éditeur</a>
 
 		<ul class="list-group list-group-flush">
 			{% for editor in editors %}
