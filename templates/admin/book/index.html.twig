@@ -7,6 +7,17 @@
 	<section class="container px-4">
 		<h1>Liste de livres</h1>
 		<a href="{{ path('app_admin_book_new') }}" class="btn btn-primary m-2">Ajouter un livre</a>
+
+		<form method="get" class="mb-4">
+			<div class="row">
+				<div class="col-3">
+					<input type="text" name="search" class="form-control" title="Filtre par titre ou auteur" placeholder="Filtre par titre ou auteur" value="{{ app.request.query.get('search') }}">
+				</div>
+				<div class="col-3">
+					<button type="submit" class="btn btn-primary">Rechercher</button>
+				</div>
+			</div>
+		</form>
 		<ul class="list-group list-group-flush">
 			{% for book in books %}
 				<div class="card mb-1">

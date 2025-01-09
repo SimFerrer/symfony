@@ -2,8 +2,10 @@
 
 namespace App\Repository;
 
+use App\DTO\BookFilter;
 use App\Entity\Book;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -16,28 +18,18 @@ class BookRepository extends ServiceEntityRepository
         parent::__construct($registry, Book::class);
     }
 
-    //    /**
-    //     * @return Book[] Returns an array of Book objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('b')
-    //            ->andWhere('b.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('b.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
 
-    //    public function findOneBySomeField($value): ?Book
-    //    {
-    //        return $this->createQueryBuilder('b')
-    //            ->andWhere('b.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    public function findFilteredBooks(BookFilter $filter): QueryBuilder
+    {
+        $qb = $this->createQueryBuilder('b')
+            ->leftJoin('b.authors', 'a')
+            ->addSelect('a');
+
+        if ($filter && $filter->value) {
+            $qb->andWhere('b.title LIKE :search OR a.name LIKE :search')
+                ->setParameter('search', '%' . $filter->value . '%');
+        }
+
+        return $qb;
+    }
 }

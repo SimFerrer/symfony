@@ -30,7 +30,7 @@ class AuthorController extends AbstractController
         $authors = Pagerfanta::createForCurrentPageWithMaxPerPage(
             new QueryAdapter($authorRepository->findByDateOfBirth($dates)),
             $request->query->get('page', 1),
-            1
+            10
         );
         return $this->render('admin/author/index.html.twig', [
             'controller_name' => 'AuthorController',

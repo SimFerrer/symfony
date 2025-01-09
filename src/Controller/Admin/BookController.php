@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\DTO\BookFilter;
 use App\Entity\Book;
 use App\Entity\User;
 use App\Form\BookType;
@@ -21,8 +22,10 @@ class BookController extends AbstractController
     #[Route('', name: 'app_admin_book', methods: ['GET'])]
     public function index(Request $request, BookRepository $bookRepository): Response
     {
+        $filter = BookFilter::fromRequest($request->query->all());
+        $queryBuilder = $bookRepository->findFilteredBooks($filter);
         $books = Pagerfanta::createForCurrentPageWithMaxPerPage(
-            new QueryAdapter($bookRepository->createQueryBuilder('b')),
+            new QueryAdapter($queryBuilder),
             $request->query->get('page', 1),
             20
         );

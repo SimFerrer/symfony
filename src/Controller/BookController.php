@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\DTO\BookFilter;
 use App\Entity\Book;
 use App\Repository\BookRepository;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
@@ -17,14 +18,17 @@ class BookController extends AbstractController
     #[Route('', name: 'app_book_index', methods: ['GET'])]
     public function index(Request $request, BookRepository $repository): Response
     {
+
+        $filter = BookFilter::fromRequest($request->query->all());
+        $queryBuilder = $repository->findFilteredBooks($filter);
         $books = Pagerfanta::createForCurrentPageWithMaxPerPage(
-            new QueryAdapter($repository->createQueryBuilder('b')),
+            new QueryAdapter($queryBuilder),
             $request->query->get('page', 1),
             20
         );
 
         return $this->render('book/index.html.twig', [
-            'books' => $books,
+            'books' => $books
         ]);
     }
 
