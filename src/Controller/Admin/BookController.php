@@ -42,7 +42,7 @@ class BookController extends AbstractController
     {
 
         if ($book) {
-            $this->denyAccessUnlessGranted('book.is_creator', $book);
+            //$this->denyAccessUnlessGranted('book.is_creator', $book);
             $this->denyAccessUnlessGranted('ROLE_EDITION_DE_LIVRE');
         }
 

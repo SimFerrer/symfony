@@ -52,7 +52,9 @@ class AuthorController extends AbstractController
     public function new(?Author $author, Request $request, EntityManagerInterface $entityManager): Response
     {
         if ($author) {
-            $this->denyAccessUnlessGranted('ROLE_EDITION_DE_LIVRE');
+            if (!$this->isGranted('ROLE_EDITION_DE_LIVRE')) {
+                throw $this->createNotFoundException('Support Group does not exist');
+            }
         }
         $author ??= new Author();
         $form = $this->createForm(AuthorType::class, $author);
