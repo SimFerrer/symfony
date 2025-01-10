@@ -29,7 +29,7 @@ class Book
     #[ORM\Column(length: 255)]
     private ?string $isbn = null;
 
-    #[Assert\Url()]
+    #[Assert\Url(requireTld: true)]
     #[Assert\NotBlank()]
     #[ORM\Column(length: 255)]
     private ?string $cover = null;
