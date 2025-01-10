@@ -5,9 +5,8 @@ namespace App\Controller\Admin;
 use App\Entity\Editor;
 use App\Form\EditorType;
 use App\Repository\EditorRepository;
+use App\Service\PaginationService;
 use Doctrine\ORM\EntityManagerInterface;
-use Pagerfanta\Doctrine\ORM\QueryAdapter;
-use Pagerfanta\Pagerfanta;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,11 +17,11 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class EditorController extends AbstractController
 {
     #[Route('', name: 'app_admin_editor', methods: ['GET'])]
-    public function index(Request $request, EditorRepository $repository): Response
+    public function index(Request $request, EditorRepository $repository, PaginationService $paginationService): Response
     {
-        $editors = Pagerfanta::createForCurrentPageWithMaxPerPage(
-            new QueryAdapter($repository->createQueryBuilder('e')),
-            $request->query->get('page', 1),
+        $editors = $paginationService->paginate(
+            $repository->createQueryBuilder('e'),
+            $request->query->getInt('page', 1),
             10
         );
 

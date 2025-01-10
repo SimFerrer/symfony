@@ -6,6 +6,7 @@ use App\Repository\EditorRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: EditorRepository::class)]
@@ -18,6 +19,7 @@ class Editor
 
     #[Assert\NotBlank()]
     #[ORM\Column(length: 255)]
+    #[Groups(['books.show'])]
     private ?string $name = null;
 
     /**

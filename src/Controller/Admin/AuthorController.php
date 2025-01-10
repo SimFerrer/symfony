@@ -5,9 +5,8 @@ namespace App\Controller\Admin;
 use App\Entity\Author;
 use App\Form\AuthorType;
 use App\Repository\AuthorRepository;
+use App\Service\PaginationService;
 use Doctrine\ORM\EntityManagerInterface;
-use Pagerfanta\Doctrine\ORM\QueryAdapter;
-use Pagerfanta\Pagerfanta;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,7 +17,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class AuthorController extends AbstractController
 {
     #[Route('', name: 'app_admin_author')]
-    public function index(Request $request, AuthorRepository $authorRepository): Response
+    public function index(Request $request, AuthorRepository $authorRepository, PaginationService $paginationService): Response
     {
         $dates = [];
         if ($request->query->has('start')) {
@@ -27,9 +26,9 @@ class AuthorController extends AbstractController
         if ($request->query->has('end')) {
             $dates['end'] = $request->query->get('end');
         }
-        $authors = Pagerfanta::createForCurrentPageWithMaxPerPage(
-            new QueryAdapter($authorRepository->findByDateOfBirth($dates)),
-            $request->query->get('page', 1),
+        $authors = $paginationService->paginate(
+            $authorRepository->findByDateOfBirth($dates),
+            $request->query->getInt('page', 1),
             10
         );
         return $this->render('admin/author/index.html.twig', [

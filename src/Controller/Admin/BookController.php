@@ -7,9 +7,8 @@ use App\Entity\Book;
 use App\Entity\User;
 use App\Form\BookType;
 use App\Repository\BookRepository;
+use App\Service\PaginationService;
 use Doctrine\ORM\EntityManagerInterface;
-use Pagerfanta\Doctrine\ORM\QueryAdapter;
-use Pagerfanta\Pagerfanta;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,16 +19,15 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class BookController extends AbstractController
 {
     #[Route('', name: 'app_admin_book', methods: ['GET'])]
-    public function index(Request $request, BookRepository $bookRepository): Response
+    public function index(Request $request, BookRepository $bookRepository, PaginationService $paginationService): Response
     {
         $filter = BookFilter::fromRequest($request->query->all());
         $queryBuilder = $bookRepository->findFilteredBooks($filter);
-        $books = Pagerfanta::createForCurrentPageWithMaxPerPage(
-            new QueryAdapter($queryBuilder),
-            $request->query->get('page', 1),
+        $books = $paginationService->paginate(
+            $queryBuilder,
+            $request->query->getInt('page', 1),
             20
         );
-
         return $this->render('admin/book/index.html.twig', [
             'books' => $books,
         ]);

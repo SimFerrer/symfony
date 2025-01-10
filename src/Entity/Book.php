@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: BookRepository::class)]
@@ -16,50 +17,60 @@ class Book
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['books.index'])]
     private ?int $id = null;
 
 
     #[Assert\NotBlank()]
     #[ORM\Column(length: 255)]
+    #[Groups(['books.index'])]
     private ?string $title = null;
 
 
     #[Assert\Isbn(type: 'isbn13')]
     #[Assert\NotBlank()]
     #[ORM\Column(length: 255)]
+    #[Groups(['books.show'])]
     private ?string $isbn = null;
 
     #[Assert\Url(requireTld: true)]
     #[Assert\NotBlank()]
     #[ORM\Column(length: 255)]
+    #[Groups(['books.index'])]
     private ?string $cover = null;
 
     #[Assert\NotBlank()]
     #[ORM\Column]
+    #[Groups(['books.show'])]
     private ?\DateTimeImmutable $editedAt = null;
 
     #[Assert\NotBlank()]
     #[Assert\Length(min: 20)]
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups(['books.show'])]
     private ?string $plot = null;
 
     #[Assert\Type(type: 'integer')]
     #[Assert\Positive()]
     #[Assert\NotBlank()]
     #[ORM\Column]
+    #[Groups(['books.show'])]
     private ?int $pageNumber = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['books.index'])]
     private ?BookStatus  $status  = null;
 
     #[ORM\ManyToOne(inversedBy: 'books')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['books.show'])]
     private ?Editor $editor = null;
 
     /**
      * @var Collection<int, Author>
      */
     #[ORM\ManyToMany(targetEntity: Author::class, mappedBy: 'books')]
+    #[Groups(['books.show'])]
     private Collection $authors;
 
     /**

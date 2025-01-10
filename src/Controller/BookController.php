@@ -5,8 +5,7 @@ namespace App\Controller;
 use App\DTO\BookFilter;
 use App\Entity\Book;
 use App\Repository\BookRepository;
-use Pagerfanta\Doctrine\ORM\QueryAdapter;
-use Pagerfanta\Pagerfanta;
+use App\Service\PaginationService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,14 +15,14 @@ use Symfony\Component\Routing\Attribute\Route;
 class BookController extends AbstractController
 {
     #[Route('', name: 'app_book_index', methods: ['GET'])]
-    public function index(Request $request, BookRepository $repository): Response
+    public function index(Request $request, BookRepository $repository, PaginationService $paginationService): Response
     {
 
         $filter = BookFilter::fromRequest($request->query->all());
         $queryBuilder = $repository->findFilteredBooks($filter);
-        $books = Pagerfanta::createForCurrentPageWithMaxPerPage(
-            new QueryAdapter($queryBuilder),
-            $request->query->get('page', 1),
+        $books = $paginationService->paginate(
+            $queryBuilder,
+            $request->query->getInt('page', 1),
             20
         );
 

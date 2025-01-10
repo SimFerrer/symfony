@@ -6,6 +6,7 @@ use App\Repository\AuthorRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 
@@ -17,16 +18,17 @@ class Author
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Assert\Length(min:10)]
+    #[Assert\Length(min: 10)]
     #[Assert\NotBlank()]
     #[ORM\Column(length: 255)]
+    #[Groups(['books.show'])]
     private ?string $name = null;
 
     #[ORM\Column]
     #[Assert\NotBlank()]
     private ?\DateTimeImmutable $dateOfBirth = null;
 
-    #[Assert\GreaterThan(propertyPath:'dateOfBirth')]
+    #[Assert\GreaterThan(propertyPath: 'dateOfBirth')]
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $dateOfDeath = null;
 
