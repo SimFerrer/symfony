@@ -2,8 +2,7 @@
 
 namespace App\Controller\Api;
 
-use App\Entity\Editor;
-use App\Repository\EditorRepository;
+use App\Service\EditorService;
 use App\Service\PaginationService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,25 +14,70 @@ class EditorController extends AbstractController
 {
 
     #[Route('', methods: ['GET'])]
-    public function index(EditorRepository $editorRepository, PaginationService $paginationService, Request $request)
+    public function index(EditorService $editorService, PaginationService $paginationService, Request $request)
     {
-
-        $queryBuilder = $editorRepository->createQueryBuilder('e');
-        $editors = $paginationService->paginate(
-            $queryBuilder,
-            $request->query->getInt('page', 1),
-            10
-        );
-        return $this->json($editors, 200, [], [
-            'groups' => ['editor.index']
-        ]);
+        try {
+            $editors = $editorService->getEditorAll($request->query->getInt('page', 1), $paginationService);
+            return $this->json($editors, 200, [], [
+                'groups' => ['editor.index']
+            ]);
+        } catch (\Exception $e) {
+            return $this->json(['error' => 'Editors not found'], 404);
+        }
     }
 
     #[Route('/{id}', requirements: ['id' => Requirement::DIGITS], methods: ['GET'])]
-    public function show(Editor $editor)
+    public function show(int $id, EditorService $editorService)
     {
-        return $this->json($editor, 200, [], [
-            'groups' => ['editor.index', 'editor.show']
-        ]);
+        try {
+            $editor = $editorService->getEditorById($id);
+            return $this->json($editor, 200, [], [
+                'groups' => ['editor.index', 'editor.show']
+            ]);
+        } catch (\Exception $e) {
+            return $this->json(['error' => 'Author not found'], 404);
+        }
+    }
+
+    #[Route('/create', methods: ['POST'])]
+    public function create(Request $request, EditorService $editorService)
+    {
+        try {
+            // Appeler le service pour créer un livre
+            $editor = $editorService->createEditor($request->getContent());
+
+            // Retourner la réponse
+            return $this->json($editor, 201, [], [
+                'groups' => ['editor.edit']
+            ]);
+        } catch (\Exception $e) {
+            // Gestion des erreurs
+            return $this->json(['error' => $e->getMessage()], 400);
+        }
+    }
+
+    #[Route('/edit', methods: ['PUT'])]
+    public function edit(Request $request, EditorService $editorService)
+    {
+        try {
+            $editor = $editorService->updateEditor($request->getContent());
+            return $this->json($editor, 200, [], [
+                'groups' => ['editor.edit']
+            ]);
+        } catch (\Exception $e) {
+            return $this->json(['error' => $e->getMessage()], 400);
+        }
+    }
+
+    #[Route('/{id}', requirements: ['id' => Requirement::DIGITS], methods: ['DELETE'])]
+    public function delete(int $id, EditorService $editorService)
+    {
+        try {
+            $editorService->deleteEditor($id);
+
+            return $this->json(['message' => 'Editor deleted successfully'], 200);
+        } catch (\Exception $e) {
+            return $this->json(['error' => $e->getMessage()], 404);
+        }
     }
 }

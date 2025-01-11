@@ -4,7 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Author;
 use App\Form\AuthorType;
-use App\Repository\AuthorRepository;
+use App\Service\AuthorService;
 use App\Service\PaginationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -17,24 +17,24 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class AuthorController extends AbstractController
 {
     #[Route('', name: 'app_admin_author')]
-    public function index(Request $request, AuthorRepository $authorRepository, PaginationService $paginationService): Response
+    public function index(Request $request, AuthorService $authorService, PaginationService $paginationService): Response
     {
-        $dates = [];
-        if ($request->query->has('start')) {
-            $dates['start'] = $request->query->get('start');
+        try {
+            $dates = [];
+            if ($request->query->has('start')) {
+                $dates['start'] = $request->query->get('start');
+            }
+            if ($request->query->has('end')) {
+                $dates['end'] = $request->query->get('end');
+            }
+            $authors = $authorService->getAuthorAll($request->query->getInt('page', 1), $paginationService, $dates);
+            return $this->render('admin/author/index.html.twig', [
+                'controller_name' => 'AuthorController',
+                'authors' => $authors,
+            ]);
+        } catch (\Exception $e) {
+            throw $this->createNotFoundException('An error occurred while fetching authors.', $e);
         }
-        if ($request->query->has('end')) {
-            $dates['end'] = $request->query->get('end');
-        }
-        $authors = $paginationService->paginate(
-            $authorRepository->findByDateOfBirth($dates),
-            $request->query->getInt('page', 1),
-            10
-        );
-        return $this->render('admin/author/index.html.twig', [
-            'controller_name' => 'AuthorController',
-            'authors' => $authors,
-        ]);
     }
 
     #[Route('/{id}', name: 'app_admin_author_show', requirements: ['id' => '\d+'], methods: ['GET'])]

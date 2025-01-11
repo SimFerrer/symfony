@@ -15,12 +15,12 @@ class Editor
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['editor.index', 'books.edit'])]
+    #[Groups(['editor.index', 'books.edit', 'editor.edit'])]
     private ?int $id = null;
 
     #[Assert\NotBlank()]
     #[ORM\Column(length: 255)]
-    #[Groups(['books.show', 'editor.index'])]
+    #[Groups(['books.show', 'editor.index', 'editor.edit'])]
     private ?string $name = null;
 
     /**

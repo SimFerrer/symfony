@@ -35,9 +35,9 @@ class AuthorService
     }
 
 
-    public function getAuthorAll($page, PaginationService $paginationService)
+    public function getAuthorAll($page, PaginationService $paginationService, array $dates)
     {
-        $queryBuilder = $this->authorRepository->createQueryBuilder('a');
+        $queryBuilder = $this->authorRepository->findByDateOfBirth($dates);
         $authors = $paginationService->paginate(
             $queryBuilder,
             $page,

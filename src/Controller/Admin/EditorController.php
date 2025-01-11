@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\Editor;
 use App\Form\EditorType;
 use App\Repository\EditorRepository;
+use App\Service\EditorService;
 use App\Service\PaginationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -17,14 +18,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class EditorController extends AbstractController
 {
     #[Route('', name: 'app_admin_editor', methods: ['GET'])]
-    public function index(Request $request, EditorRepository $repository, PaginationService $paginationService): Response
+    public function index(Request $request, EditorService $editorService, PaginationService $paginationService): Response
     {
-        $editors = $paginationService->paginate(
-            $repository->createQueryBuilder('e'),
-            $request->query->getInt('page', 1),
-            10
-        );
-
+        $editors = $editorService->getEditorAll($request->query->getInt('page', 1), $paginationService);
         return $this->render('admin/editor/index.html.twig', [
             'controller_name' => 'EditorController',
             'editors' => $editors

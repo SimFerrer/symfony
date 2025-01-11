@@ -2,7 +2,6 @@
 
 namespace App\Controller\Api;
 
-use App\Entity\Author;
 use App\Service\AuthorService;
 use App\Service\PaginationService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -19,7 +18,14 @@ class AuthorController extends AbstractController
     {
 
         try {
-            $authors = $authorService->getAuthorAll($request->query->getInt('page', 1), $paginationService);
+            $dates = [];
+            if ($request->query->has('start')) {
+                $dates['start'] = $request->query->get('start');
+            }
+            if ($request->query->has('end')) {
+                $dates['end'] = $request->query->get('end');
+            }
+            $authors = $authorService->getAuthorAll($request->query->getInt('page', 1), $paginationService, $dates);
             return $this->json($authors, 200, [], [
                 'groups' => ['author.index']
             ]);
