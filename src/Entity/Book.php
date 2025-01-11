@@ -17,26 +17,25 @@ class Book
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['books.index'])]
+    #[Groups(['books.index', 'books.edit', 'authors.edit'])]
     private ?int $id = null;
-
 
     #[Assert\NotBlank()]
     #[ORM\Column(length: 255)]
-    #[Groups(['books.index'])]
+    #[Groups(['books.index', 'books.edit', 'author.show', 'editor.show'])]
     private ?string $title = null;
 
 
     #[Assert\Isbn(type: 'isbn13')]
     #[Assert\NotBlank()]
     #[ORM\Column(length: 255)]
-    #[Groups(['books.show'])]
+    #[Groups(['books.show', 'books.edit'])]
     private ?string $isbn = null;
 
     #[Assert\Url(requireTld: true)]
     #[Assert\NotBlank()]
     #[ORM\Column(length: 255)]
-    #[Groups(['books.index'])]
+    #[Groups(['books.index', 'books.edit'])]
     private ?string $cover = null;
 
     #[Assert\NotBlank()]
@@ -47,30 +46,30 @@ class Book
     #[Assert\NotBlank()]
     #[Assert\Length(min: 20)]
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(['books.show'])]
+    #[Groups(['books.show', 'books.edit'])]
     private ?string $plot = null;
 
     #[Assert\Type(type: 'integer')]
     #[Assert\Positive()]
     #[Assert\NotBlank()]
     #[ORM\Column]
-    #[Groups(['books.show'])]
+    #[Groups(['books.show', 'books.edit'])]
     private ?int $pageNumber = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['books.index'])]
+    #[Groups(['books.index', 'books.edit'])]
     private ?BookStatus  $status  = null;
 
     #[ORM\ManyToOne(inversedBy: 'books')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['books.show'])]
+    #[Groups(['books.show', 'books.edit'])]
     private ?Editor $editor = null;
 
     /**
      * @var Collection<int, Author>
      */
-    #[ORM\ManyToMany(targetEntity: Author::class, mappedBy: 'books')]
-    #[Groups(['books.show'])]
+    #[ORM\ManyToMany(targetEntity: Author::class, mappedBy: 'books', cascade: ['persist'])]
+    #[Groups(['books.show', 'books.edit'])]
     private Collection $authors;
 
     /**

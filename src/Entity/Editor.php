@@ -15,17 +15,19 @@ class Editor
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['editor.index', 'books.edit'])]
     private ?int $id = null;
 
     #[Assert\NotBlank()]
     #[ORM\Column(length: 255)]
-    #[Groups(['books.show'])]
+    #[Groups(['books.show', 'editor.index'])]
     private ?string $name = null;
 
     /**
      * @var Collection<int, Book>
      */
     #[ORM\OneToMany(targetEntity: Book::class, mappedBy: 'editor', orphanRemoval: true)]
+    #[Groups(['editor.show'])]
     private Collection $books;
 
     public function __construct()

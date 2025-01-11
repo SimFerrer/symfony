@@ -16,29 +16,34 @@ class Author
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['author.index', 'books.edit', 'authors.edit'])]
     private ?int $id = null;
 
     #[Assert\Length(min: 10)]
     #[Assert\NotBlank()]
     #[ORM\Column(length: 255)]
-    #[Groups(['books.show'])]
+    #[Groups(['books.show', 'author.index', 'authors.edit'])]
     private ?string $name = null;
 
     #[ORM\Column]
     #[Assert\NotBlank()]
+    #[Groups(['author.show', 'authors.edit'])]
     private ?\DateTimeImmutable $dateOfBirth = null;
 
     #[Assert\GreaterThan(propertyPath: 'dateOfBirth')]
     #[ORM\Column(nullable: true)]
+    #[Groups(['author.show', 'authors.edit'])]
     private ?\DateTimeImmutable $dateOfDeath = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['author.index', 'authors.edit'])]
     private ?string $nationality = null;
 
     /**
      * @var Collection<int, Book>
      */
-    #[ORM\ManyToMany(targetEntity: Book::class, inversedBy: 'authors')]
+    #[ORM\ManyToMany(targetEntity: Book::class, inversedBy: 'authors', cascade: ['persist'])]
+    #[Groups(['author.show', 'authors.edit'])]
     private Collection $books;
 
     public function __construct()
