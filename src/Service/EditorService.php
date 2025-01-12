@@ -101,7 +101,7 @@ class EditorService
         }
         $errors = $this->validator->validate($editor);
         if (count($errors) > 0) {
-            throw new ValidationFailedException('Validation failed', $errors);
+            throw new \Exception("Incorrect data");
         }
 
         return $editor;

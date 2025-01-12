@@ -114,7 +114,7 @@ class AuthorService
         }
         $errors = $this->validator->validate($author);
         if (count($errors) > 0) {
-            throw new ValidationFailedException('Validation failed', $errors);
+            throw new \Exception("Incorrect data");
         }
 
         return $author;

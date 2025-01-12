@@ -132,7 +132,7 @@ class BookService
 
         $errors = $this->validator->validate($book);
         if (count($errors) > 0) {
-            throw new ValidationFailedException('Validation failed', $errors);
+            throw new \Exception("Incorrect data");
         }
 
         return $book;
