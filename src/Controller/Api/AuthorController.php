@@ -8,6 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/api/author')]
 class AuthorController extends AbstractController
@@ -48,6 +49,7 @@ class AuthorController extends AbstractController
     }
 
     #[Route('/create', methods: ['POST'])]
+    #[IsGranted('ROLE_AJOUT_DE_LIVRE')]
     public function create(Request $request, AuthorService $authorService)
     {
         try {
@@ -65,6 +67,7 @@ class AuthorController extends AbstractController
     }
 
     #[Route('/edit', methods: ['PUT'])]
+    #[IsGranted('ROLE_EDITION_DE_LIVRE')]
     public function edit(Request $request, AuthorService $authorService)
     {
         try {
@@ -78,6 +81,7 @@ class AuthorController extends AbstractController
     }
 
     #[Route('/{id}', requirements: ['id' => Requirement::DIGITS], methods: ['DELETE'])]
+    #[IsGranted('ROLE_AJOUT_DE_LIVRE')]
     public function delete(int $id, AuthorService $authorService)
     {
         try {

@@ -3,14 +3,13 @@
 namespace App\Controller\Api;
 
 use App\DTO\BookFilter;
-use App\Entity\Book;
-use App\Repository\BookRepository;
 use App\Service\BookService;
 use App\Service\PaginationService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/api/book')]
 class BookController extends AbstractController
@@ -45,6 +44,7 @@ class BookController extends AbstractController
     }
 
     #[Route('/create', methods: ['POST'])]
+    #[IsGranted('ROLE_AJOUT_DE_LIVRE')]
     public function create(Request $request, BookService $bookService)
     {
         try {
@@ -62,6 +62,7 @@ class BookController extends AbstractController
     }
 
     #[Route('/edit', methods: ['PUT'])]
+    #[IsGranted('ROLE_EDITION_DE_LIVRE')]
     public function edit(Request $request, BookService $bookService)
     {
         try {
@@ -77,6 +78,7 @@ class BookController extends AbstractController
 
 
     #[Route('/{id}', requirements: ['id' => Requirement::DIGITS], methods: ['DELETE'])]
+    #[IsGranted('ROLE_AJOUT_DE_LIVRE')]
     public function delete(int $id, BookService $bookService)
     {
         try {
