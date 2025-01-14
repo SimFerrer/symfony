@@ -15,7 +15,7 @@ class Editor
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['editor.index', 'books.edit', 'editor.edit'])]
+    #[Groups(['editor.index','books.show', 'books.edit', 'editor.edit'])]
     private ?int $id = null;
 
     #[Assert\NotBlank()]

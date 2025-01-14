@@ -44,12 +44,28 @@ class BookService
 
     public function getBookAll($filter, $page, PaginationService $paginationService)
     {
-        $queryBuilder = $this->bookRepository->findFilteredBooks($filter);
-        $books = $paginationService->paginate(
-            $queryBuilder,
-            $page,
-            20
-        );
+        if ($page) {
+            $queryBuilder = $this->bookRepository->findFilteredBooks($filter);
+            $books = $paginationService->paginate(
+                $queryBuilder,
+                $page,
+                20
+            );
+        } else {
+            $allBooks = $this->bookRepository->findAll();
+
+            
+            $books = [
+                'items' => $allBooks,
+                'pagination' => [
+                    'currentPage' => 1, 
+                    'totalItems' => count($allBooks),
+                    'itemsPerPage' => count($allBooks),
+                    'totalPages' => 1,
+                ],
+            ];
+        }
+
         return $books;
     }
     public function getBookById(int $id): ?Book
@@ -119,6 +135,7 @@ class BookService
 
 
         $authorIds = $decodedData['author_ids'] ?? [];
+        
         $authors = $this->authorRepository->findBy(['id' => $authorIds]);
         if (count($authors) !== count($authorIds)) {
             throw new \Exception("One or more authors not found");
@@ -134,6 +151,7 @@ class BookService
         if (count($errors) > 0) {
             throw new \Exception("Incorrect data");
         }
+        
 
         return $book;
     }

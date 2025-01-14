@@ -19,7 +19,7 @@ class BookController extends AbstractController
     {
         try {
             $filter = BookFilter::fromRequest($request->query->all());
-            $page = $request->query->getInt('page', 1);
+            $page = $request->query->getInt('page');
             $books = $bookService->getBookAll($filter, $page, $paginationService);
             return $this->json($books, 200, [], [
                 'groups' => ['books.index']

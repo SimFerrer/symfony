@@ -56,6 +56,7 @@ security:
         - { path: ^/admin, roles: IS_AUTHENTICATED }
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
         - { path: ^/api/book$, roles: PUBLIC_ACCESS }
+        - { path: ^/api/book/\d+$, roles: PUBLIC_ACCESS }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
 
 when@test:

@@ -26,7 +26,8 @@ class AuthorController extends AbstractController
             if ($request->query->has('end')) {
                 $dates['end'] = $request->query->get('end');
             }
-            $authors = $authorService->getAuthorAll($request->query->getInt('page', 1), $paginationService, $dates);
+            $page = $request->query->getInt('page');
+            $authors = $authorService->getAuthorAll($page, $paginationService, $dates);
             return $this->json($authors, 200, [], [
                 'groups' => ['author.index']
             ]);

@@ -18,7 +18,8 @@ class EditorController extends AbstractController
     public function index(EditorService $editorService, PaginationService $paginationService, Request $request)
     {
         try {
-            $editors = $editorService->getEditorAll($request->query->getInt('page', 1), $paginationService);
+            $page = $request->query->getInt('page');
+            $editors = $editorService->getEditorAll($page, $paginationService);
             return $this->json($editors, 200, [], [
                 'groups' => ['editor.index']
             ]);

@@ -37,12 +37,28 @@ class AuthorService
 
     public function getAuthorAll($page, PaginationService $paginationService, array $dates)
     {
-        $queryBuilder = $this->authorRepository->findByDateOfBirth($dates);
-        $authors = $paginationService->paginate(
-            $queryBuilder,
-            $page,
-            10
-        );
+        if ($page) {
+            $queryBuilder = $this->authorRepository->findByDateOfBirth($dates);
+            $authors = $paginationService->paginate(
+                $queryBuilder,
+                $page,
+                10
+            );
+        }
+        else{
+            $allAuthors = $this->authorRepository->findBy([], ['name' => 'ASC']);
+
+            
+            $authors = [
+                'items' => $allAuthors,
+                'pagination' => [
+                    'currentPage' => 1, 
+                    'totalItems' => count($allAuthors),
+                    'itemsPerPage' => count($allAuthors),
+                    'totalPages' => 1,
+                ],
+            ];
+        }
         return $authors;
     }
 

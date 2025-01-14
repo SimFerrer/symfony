@@ -9,7 +9,9 @@ Virtual book catalog that allows the user to:
 Additionally, the library staff requires an administration interface to manage books and their statuses.
 
 This project is built using Symfony 7.2 and includes functionality for both public catalog access and administrative management.
-
+The project is made in two parts:
+- The templating part with the render twig
+- And a rest api with jwt token authentication
 ---
 
 ## Features
@@ -67,36 +69,38 @@ This project is built using Symfony 7.2 and includes functionality for both publ
 
 ---
 
-## Controllers Overview
+## Templating Part
 
-### Admin Controllers
-#### AuthorController
+### Controllers Overview
+
+#### Admin Controllers
+##### AuthorController
 Manage authors in the system, including listing, viewing, creating, and editing authors.
 
-#### EditorController
+##### EditorController
 Manage editors, including adding, editing, and listing editors.
 
-#### BookController
+##### BookController
 Admin interface for managing books:
 - Add/edit book details.
 - Manage book statuses.
 
 ---
 
-### Public Controllers
-#### BookController
+#### Public Controllers
+##### BookController
 The public-facing catalog that allows visitors to browse and search books.
 
-#### RegistrationController
+##### RegistrationController
 Handles user registration for accessing personalized features.
 
-#### SecurityController
+##### SecurityController
 Manages authentication and user login/logout functionality.
 
 ---
 
 
-## Example Admin Workflow
+### Example Admin Workflow
 1. Navigate to `/admin`.
 2. Use the `AuthorController`, `EditorController`, or `BookController` to manage corresponding entities.
 3. Add or edit entities via the provided forms. For example, to create a new author:
@@ -108,6 +112,9 @@ Manages authentication and user login/logout functionality.
 ## Security
 - Access to the administration pages requires authentication.
 - Role-based permissions restrict access to sensitive features (e.g., `ROLE_ADMIN`, `ROLE_EDITION_DE_LIVRE`).
+- JWT Authentication: API access requires a valid JWT token.
+- Role-based Permissions: Access to sensitive resources is restricted by roles (e.g., ROLE_ADMIN, ROLE_AJOUT_DE_LIVRE, ROLE_EDITION_DE_LIVRE).
+- Public Access: Some endpoints (e.g., /api/login, /api/book) are publicly accessible. All other API routes require authentication.
 
 ---
 

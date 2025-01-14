@@ -13,10 +13,6 @@ class SecurityController extends AbstractController
     #[Route(path: '/login', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils, CsrfTokenManagerInterface $csrfTokenManager): Response
     {
-
-        $token = $csrfTokenManager->getToken('authenticate');
-        dump($token);
-
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
 
@@ -25,8 +21,7 @@ class SecurityController extends AbstractController
 
         return $this->render('security/login.html.twig', [
             'last_username' => $lastUsername,
-            'error' => $error,
-            'token' => $token
+            'error' => $error
         ]);
     }
 

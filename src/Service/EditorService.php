@@ -31,12 +31,28 @@ class EditorService
 
     public function getEditorAll($page, PaginationService $paginationService)
     {
-        $queryBuilder = $this->editorRepository->createQueryBuilder('e');
-        $editors = $paginationService->paginate(
-            $queryBuilder,
-            $page,
-            20
-        );
+        if ($page) {
+            $queryBuilder = $this->editorRepository->createQueryBuilder('e');
+            $editors = $paginationService->paginate(
+                $queryBuilder,
+                $page,
+                20
+            );
+        }
+        else{
+            $allEditors = $this->editorRepository->findBy([], ['name' => 'ASC']);
+
+            
+            $editors = [
+                'items' => $allEditors,
+                'pagination' => [
+                    'currentPage' => 1, 
+                    'totalItems' => count($allEditors),
+                    'itemsPerPage' => count($allEditors),
+                    'totalPages' => 1,
+                ],
+            ];
+        }
         return $editors;
     }
 
