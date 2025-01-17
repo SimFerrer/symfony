@@ -15,6 +15,15 @@ The project is made in two parts:
 
 you can test the api with postman or use the angular project https://github.com/SimFerrer/angular-bibliotheque which makes requests there
 
+
+
+## Table of Contents
+- [Features](#features)
+- [Installation](#installation)
+- [Templating Part](#templating-part)
+- [API Part](#api-part)
+- [Security](#security)
+
 ## Features
 
 ### Public Catalog
