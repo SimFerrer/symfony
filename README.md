@@ -126,25 +126,6 @@ The API uses JWT (JSON Web Token) authentication. Upon a successful login, both 
  - Parameters: `email` and `password`
  - Response : `access_token` : Token to use for authenticating subsequent requests.
 
-# Library Management API Documentation
-
-This document provides detailed information about the Library Management API endpoints and their usage.
-
-## Table of Contents
-- [Authentication](#authentication)
-- [Authors API](#authors-api)
-- [Books API](#books-api)
-- [Editors API](#editors-api)
-- [Error Handling](#error-handling)
-
-## Authentication
-
-Protected endpoints require a valid access token in the Authorization header.
-
-```http
-Authorization: Bearer <your_access_token>
-```
-
 ### Authors API
 
 - List Authors
