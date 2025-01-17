@@ -12,7 +12,8 @@ This project is built using Symfony 7.2 and includes functionality for both publ
 The project is made in two parts:
 - The templating part with the render twig
 - And a rest api with jwt token authentication
----
+
+you can test the api with postman or use the angular project https://github.com/SimFerrer/angular-bibliotheque which makes requests there
 
 ## Features
 
@@ -25,6 +26,11 @@ The project is made in two parts:
 - Add, edit, or delete books.
 - Manage authors and editors.
 - Update the borrowing status of books.
+
+### Api
+It is also possible to communicate with a rest API
+- Manage books, authors and editors
+
 
 ---
 
@@ -108,6 +114,191 @@ Manages authentication and user login/logout functionality.
    - Fill out the form and submit.
 
 ---
+
+## API Part
+
+### Authentification
+The API uses JWT (JSON Web Token) authentication. Upon a successful login, both an access token and a refresh token are generated.
+
+- Login
+ - URL : `/api/login`
+ - Method : `POST`
+ - Parameters: `email` and `password`
+ - Response : `access_token` : Token to use for authenticating subsequent requests.
+
+# Library Management API Documentation
+
+This document provides detailed information about the Library Management API endpoints and their usage.
+
+## Table of Contents
+- [Authentication](#authentication)
+- [Authors API](#authors-api)
+- [Books API](#books-api)
+- [Editors API](#editors-api)
+- [Error Handling](#error-handling)
+
+## Authentication
+
+Protected endpoints require a valid access token in the Authorization header.
+
+```http
+Authorization: Bearer <your_access_token>
+```
+
+### Authors API
+
+- List Authors
+
+Retrieve a paginated list of authors with optional date filters.
+
+```http
+GET /api/author
+```
+
+**Parameters:**
+- `page` (optional): Page number (default: 1)
+- `start` (optional): Filter by start date (YYYY-MM-DD)
+- `end` (optional): Filter by end date (YYYY-MM-DD)
+
+
+- Get Author
+
+Retrieve detailed information about a specific author.
+
+```http
+GET /api/author/{id}
+```
+
+**Parameters:**
+- `id`: Author ID (required)
+
+- Create Author
+
+Create a new author (requires ROLE_AJOUT_DE_LIVRE role).
+
+```http
+POST /api/author/create
+Content-Type: application/json
+```
+
+- Update Author
+
+Update an existing author (requires ROLE_EDITION_DE_LIVRE role).
+
+```http
+PUT /api/author/edit
+Content-Type: application/json
+```
+
+
+- Delete Author
+
+Delete an author (requires ROLE_AJOUT_DE_LIVRE role).
+
+```http
+DELETE /api/author/{id}
+```
+
+**Parameters:**
+- `id`: Author ID (required)
+
+### Books API
+
+- List Books
+
+Retrieve a paginated list of books.
+
+```http
+GET /api/book
+```
+
+**Parameters:**
+- `page` (optional): Page number (default: 1)
+
+
+- Get Book
+
+Retrieve detailed information about a specific book.
+
+```http
+GET /api/book/{id}
+```
+
+**Parameters:**
+- `id`: Book ID (required)
+
+- Create Book
+
+Create a new book (requires ROLE_AJOUT_DE_LIVRE role).
+
+```http
+POST /api/book/create
+Content-Type: application/json
+```
+
+
+- Update Book
+
+Update an existing book (requires ROLE_EDITION_DE_LIVRE role).
+
+```http
+PUT /api/book/edit
+Content-Type: application/json
+```
+
+- Delete Book
+
+Delete a book (requires ROLE_AJOUT_DE_LIVRE role).
+
+```http
+DELETE /api/book/{id}
+```
+
+**Parameters:**
+- `id`: Book ID (required)
+
+### Editors API
+
+- List Editors
+
+Retrieve a list of all editors.
+
+```http
+GET /api/editor
+```
+
+- Get Editor
+
+Retrieve information about a specific editor.
+
+```http
+GET /api/editor/{id}
+```
+
+**Parameters:**
+- `id`: Editor ID (required)
+
+- Create Editor
+
+Create a new editor (requires ROLE_AJOUT_DE_LIVRE role).
+
+```http
+POST /api/editor/create
+Content-Type: application/json
+```
+
+
+### Error Handling
+
+The API uses standard HTTP status codes to indicate the success or failure of requests:
+
+| Status Code | Description |
+|------------|-------------|
+| 200 | Success |
+| 400 | Bad Request - Invalid parameters or validation errors |
+| 401 | Unauthorized - Missing or expired token |
+| 404 | Not Found - Resource not found |
+| 500 | Internal Server Error |
 
 ## Security
 - Access to the administration pages requires authentication.
