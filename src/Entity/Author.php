@@ -16,10 +16,10 @@ class Author
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['author.index','books.show', 'books.edit', 'authors.edit'])]
+    #[Groups(['author.index', 'books.show', 'books.edit', 'authors.edit'])]
     private ?int $id = null;
 
-    #[Assert\Length(min: 10)]
+    #[Assert\Length(min: 5)]
     #[Assert\NotBlank()]
     #[ORM\Column(length: 255)]
     #[Groups(['books.show', 'author.index', 'authors.edit'])]

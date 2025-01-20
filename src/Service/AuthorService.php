@@ -47,8 +47,12 @@ class AuthorService extends AbstractEntityService
         }
         ($edit) ? $author = $this->authorRepository->find($decodedData['id']) : $author = new Author();
 
+        if ($decodedData['dateOfDeath'] === '') {
+            unset($decodedData['dateOfDeath']);
+        }
+        $cleanedData = json_encode($decodedData);
         $this->serializer->deserialize(
-            $data,
+            $cleanedData,
             Author::class,
             'json',
             [AbstractNormalizer::OBJECT_TO_POPULATE => $author],
