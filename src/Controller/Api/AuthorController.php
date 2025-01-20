@@ -2,6 +2,7 @@
 
 namespace App\Controller\Api;
 
+use App\Repository\AuthorRepository;
 use App\Service\AuthorService;
 use App\Service\PaginationService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,7 +16,7 @@ class AuthorController extends AbstractController
 {
 
     #[Route('', methods: ['GET'])]
-    public function index(AuthorService $authorService, PaginationService $paginationService, Request $request)
+    public function index(AuthorService $authorService, PaginationService $paginationService, Request $request, AuthorRepository $authorRepository)
     {
 
         try {
@@ -27,20 +28,20 @@ class AuthorController extends AbstractController
                 $dates['end'] = $request->query->get('end');
             }
             $page = $request->query->getInt('page');
-            $authors = $authorService->getAuthorAll($page, $paginationService, $dates);
+            $authors = $authorService->getAll($dates, $page, $paginationService, $authorRepository);
             return $this->json($authors, 200, [], [
                 'groups' => ['author.index']
             ]);
         } catch (\Exception $e) {
-            return $this->json(['error' => 'Authors not found'], 404);
+            return $this->json(['error' => $e->getMessage()], 404);
         }
     }
 
     #[Route('/{id}', requirements: ['id' => Requirement::DIGITS], methods: ['GET'])]
-    public function show(int $id, AuthorService $authorService)
+    public function show(int $id, AuthorService $authorService, AuthorRepository $authorRepository)
     {
         try {
-            $author = $authorService->getAuthorById($id);
+            $author = $authorService->getById($id, $authorRepository);
             return $this->json($author, 200, [], [
                 'groups' => ['author.index', 'author.show']
             ]);
@@ -55,7 +56,7 @@ class AuthorController extends AbstractController
     {
         try {
             // Appeler le service pour créer un livre
-            $author = $authorService->createAuthor($request->getContent());
+            $author = $authorService->create($request->getContent());
 
             // Retourner la réponse
             return $this->json($author, 201, [], [
@@ -72,7 +73,7 @@ class AuthorController extends AbstractController
     public function edit(Request $request, AuthorService $authorService)
     {
         try {
-            $author = $authorService->updateAuthor($request->getContent());
+            $author = $authorService->update($request->getContent());
             return $this->json($author, 200, [], [
                 'groups' => ['authors.edit']
             ]);
@@ -83,10 +84,10 @@ class AuthorController extends AbstractController
 
     #[Route('/{id}', requirements: ['id' => Requirement::DIGITS], methods: ['DELETE'])]
     #[IsGranted('ROLE_AJOUT_DE_LIVRE')]
-    public function delete(int $id, AuthorService $authorService)
+    public function delete(int $id, AuthorService $authorService, AuthorRepository $authorRepository)
     {
         try {
-            $authorService->deleteAuthor($id);
+            $authorService->delete($id, $authorRepository);
 
             return $this->json(['message' => 'Author deleted successfully'], 200);
         } catch (\Exception $e) {

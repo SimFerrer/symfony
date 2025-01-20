@@ -3,6 +3,7 @@
 namespace App\Controller\Api;
 
 use App\DTO\BookFilter;
+use App\Repository\BookRepository;
 use App\Service\BookService;
 use App\Service\PaginationService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,12 +16,12 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class BookController extends AbstractController
 {
     #[Route('', methods: ['GET'])]
-    public function index(BookService $bookService, PaginationService $paginationService, Request $request)
+    public function index(BookService $bookService, PaginationService $paginationService, Request $request, BookRepository $bookRepository)
     {
         try {
             $filter = BookFilter::fromRequest($request->query->all());
             $page = $request->query->getInt('page');
-            $books = $bookService->getBookAll($filter, $page, $paginationService);
+            $books = $bookService->getAll($filter, $page, $paginationService, $bookRepository);
             return $this->json($books, 200, [], [
                 'groups' => ['books.index']
             ]);
@@ -30,10 +31,10 @@ class BookController extends AbstractController
     }
 
     #[Route('/{id}', requirements: ['id' => Requirement::DIGITS], methods: ['GET'])]
-    public function show(int $id, BookService $bookService)
+    public function show(int $id, BookService $bookService, BookRepository $bookRepository)
     {
         try {
-            $book = $bookService->getBookById($id);
+            $book = $bookService->getById($id, $bookRepository);
 
             return $this->json($book, 200, [], [
                 'groups' => ['books.index', 'books.show']
@@ -49,7 +50,7 @@ class BookController extends AbstractController
     {
         try {
             // Appeler le service pour créer un livre
-            $book = $bookService->createBook($request->getContent());
+            $book = $bookService->create($request->getContent());
 
             // Retourner la réponse
             return $this->json($book, 201, [], [
@@ -66,7 +67,7 @@ class BookController extends AbstractController
     public function edit(Request $request, BookService $bookService)
     {
         try {
-            $book = $bookService->updateBook($request->getContent());
+            $book = $bookService->update($request->getContent());
 
             return $this->json($book, 200, [], [
                 'groups' => ['books.edit']
@@ -79,10 +80,10 @@ class BookController extends AbstractController
 
     #[Route('/{id}', requirements: ['id' => Requirement::DIGITS], methods: ['DELETE'])]
     #[IsGranted('ROLE_AJOUT_DE_LIVRE')]
-    public function delete(int $id, BookService $bookService)
+    public function delete(int $id, BookService $bookService, BookRepository $bookRepository)
     {
         try {
-            $bookService->deleteBook($id);
+            $bookService->delete($id, $bookRepository);
 
             return $this->json(['message' => 'Book deleted successfully'], 200);
         } catch (\Exception $e) {

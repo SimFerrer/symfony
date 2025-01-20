@@ -4,18 +4,17 @@ namespace App\Service;
 
 use App\Entity\Editor;
 use App\Repository\EditorRepository;
+use App\Service\Abstract\AbstractEntityService;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Validator\Exception\ValidationFailedException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class EditorService
+class EditorService extends AbstractEntityService
 {
-    private $entityManager;
-    private $editorRepository;
-    private $serializer;
-    private $validator;
+
+    private EditorRepository $editorRepository;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -23,83 +22,16 @@ class EditorService
         SerializerInterface $serializer,
         ValidatorInterface $validator
     ) {
-        $this->entityManager = $entityManager;
+        parent::__construct($entityManager, $serializer, $validator);
         $this->editorRepository = $editorRepository;
-        $this->serializer = $serializer;
-        $this->validator = $validator;
     }
 
-    public function getEditorAll($page, PaginationService $paginationService)
+    protected function customizeQueryBuilder($repository, $filter): ?QueryBuilder
     {
-        if ($page) {
-            $queryBuilder = $this->editorRepository->createQueryBuilder('e');
-            $editors = $paginationService->paginate(
-                $queryBuilder,
-                $page,
-                20
-            );
-        }
-        else{
-            $allEditors = $this->editorRepository->findBy([], ['name' => 'ASC']);
-
-            
-            $editors = [
-                'items' => $allEditors,
-                'pagination' => [
-                    'currentPage' => 1, 
-                    'totalItems' => count($allEditors),
-                    'itemsPerPage' => count($allEditors),
-                    'totalPages' => 1,
-                ],
-            ];
-        }
-        return $editors;
+        return $this->editorRepository->createQueryBuilder('e');
     }
 
-    public function getEditorById(int $id): ?Editor
-    {
-        $editor = $this->editorRepository->find($id);
-        if (!$editor) {
-            throw new \Exception('Editor not found');
-        }
-
-        return $editor;
-    }
-
-
-    public function deleteEditor(int $id): void
-    {
-        $editor = $this->editorRepository->find($id);
-
-        if (!$editor) {
-            throw new \Exception('Editor not found');
-        }
-        $this->entityManager->remove($editor);
-        $this->entityManager->flush();
-    }
-
-    public function createEditor(string $data): Editor
-    {
-        $editor = $this->prepareEditor($data);
-
-        $this->entityManager->persist($editor);
-        $this->entityManager->flush();
-
-        return $editor;
-    }
-
-    public function updateEditor(string $data): Editor
-    {
-        $editor = $this->prepareEditor($data, true);
-
-        // Sauvegarde en base de données
-        $this->entityManager->flush();
-
-        return $editor;
-    }
-
-
-    private function prepareEditor(string $data, bool $edit = false): Editor
+    protected function prepare(string $data, bool $edit = false): Editor
     {
         $decodedData = json_decode($data, true);
 

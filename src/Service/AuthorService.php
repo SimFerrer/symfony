@@ -5,20 +5,19 @@ namespace App\Service;
 use App\Entity\Author;
 use App\Repository\AuthorRepository;
 use App\Repository\BookRepository;
+use App\Service\Abstract\AbstractEntityService;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Validator\Exception\ValidationFailedException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class AuthorService
+class AuthorService extends AbstractEntityService
 {
 
-    private $entityManager;
-    private $bookRepository;
-    private $authorRepository;
-    private $serializer;
-    private $validator;
+
+    private BookRepository $bookRepository;
+    private AuthorRepository $authorRepository;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -27,81 +26,20 @@ class AuthorService
         SerializerInterface $serializer,
         ValidatorInterface $validator
     ) {
-        $this->entityManager = $entityManager;
+        parent::__construct($entityManager, $serializer, $validator);
         $this->bookRepository = $bookRepository;
         $this->authorRepository = $authorRepository;
-        $this->serializer = $serializer;
-        $this->validator = $validator;
     }
 
 
-    public function getAuthorAll($page, PaginationService $paginationService, array $dates)
+    protected function customizeQueryBuilder($repository, $filter): ?QueryBuilder
     {
-        if ($page) {
-            $queryBuilder = $this->authorRepository->findByDateOfBirth($dates);
-            $authors = $paginationService->paginate(
-                $queryBuilder,
-                $page,
-                10
-            );
-        }
-        else{
-            $allAuthors = $this->authorRepository->findBy([], ['name' => 'ASC']);
-
-            
-            $authors = [
-                'items' => $allAuthors,
-                'pagination' => [
-                    'currentPage' => 1, 
-                    'totalItems' => count($allAuthors),
-                    'itemsPerPage' => count($allAuthors),
-                    'totalPages' => 1,
-                ],
-            ];
-        }
-        return $authors;
+        return $this->authorRepository->findByDateOfBirth($filter);
     }
 
-    public function getAuthorById(int $id): ?Author
-    {
-        $author = $this->authorRepository->find($id);
-        if (!$author) {
-            throw new \Exception('Author not found');
-        }
-        return $author;
-    }
 
-    public function deleteAuthor(int $id): void
-    {
-        $author = $this->authorRepository->find($id);
 
-        if (!$author) {
-            throw new \Exception('Author not found');
-        }
-        $this->entityManager->remove($author);
-        $this->entityManager->flush();
-    }
-
-    public function createAuthor(string $data): Author
-    {
-        $author = $this->prepareAuthor($data);
-        $this->entityManager->persist($author);
-        $this->entityManager->flush();
-
-        return $author;
-    }
-
-    public function updateAuthor(string $data): Author
-    {
-        $book = $this->prepareAuthor($data, true);
-
-        // Sauvegarde en base de données
-        $this->entityManager->flush();
-
-        return $book;
-    }
-
-    private function prepareAuthor(string $data, bool $edit = false): Author
+    protected function prepare(string $data, bool $edit = false): Author
     {
         $decodedData = json_decode($data, true);
         if (!$decodedData) {

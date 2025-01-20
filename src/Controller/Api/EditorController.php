@@ -2,6 +2,7 @@
 
 namespace App\Controller\Api;
 
+use App\Repository\EditorRepository;
 use App\Service\EditorService;
 use App\Service\PaginationService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,11 +16,11 @@ class EditorController extends AbstractController
 {
 
     #[Route('', methods: ['GET'])]
-    public function index(EditorService $editorService, PaginationService $paginationService, Request $request)
+    public function index(EditorService $editorService, PaginationService $paginationService, Request $request, EditorRepository $editorRepository)
     {
         try {
             $page = $request->query->getInt('page');
-            $editors = $editorService->getEditorAll($page, $paginationService);
+            $editors = $editorService->getAll(null, $page, $paginationService, $editorRepository);
             return $this->json($editors, 200, [], [
                 'groups' => ['editor.index']
             ]);
@@ -29,10 +30,10 @@ class EditorController extends AbstractController
     }
 
     #[Route('/{id}', requirements: ['id' => Requirement::DIGITS], methods: ['GET'])]
-    public function show(int $id, EditorService $editorService)
+    public function show(int $id, EditorService $editorService, EditorRepository $editorRepository)
     {
         try {
-            $editor = $editorService->getEditorById($id);
+            $editor = $editorService->getById($id, $editorRepository);
             return $this->json($editor, 200, [], [
                 'groups' => ['editor.index', 'editor.show']
             ]);
@@ -47,7 +48,7 @@ class EditorController extends AbstractController
     {
         try {
             // Appeler le service pour créer un livre
-            $editor = $editorService->createEditor($request->getContent());
+            $editor = $editorService->create($request->getContent());
 
             // Retourner la réponse
             return $this->json($editor, 201, [], [
@@ -64,7 +65,7 @@ class EditorController extends AbstractController
     public function edit(Request $request, EditorService $editorService)
     {
         try {
-            $editor = $editorService->updateEditor($request->getContent());
+            $editor = $editorService->update($request->getContent());
             return $this->json($editor, 200, [], [
                 'groups' => ['editor.edit']
             ]);
@@ -75,10 +76,10 @@ class EditorController extends AbstractController
 
     #[Route('/{id}', requirements: ['id' => Requirement::DIGITS], methods: ['DELETE'])]
     #[IsGranted('ROLE_AJOUT_DE_LIVRE')]
-    public function delete(int $id, EditorService $editorService)
+    public function delete(int $id, EditorService $editorService, EditorRepository $editorRepository)
     {
         try {
-            $editorService->deleteEditor($id);
+            $editorService->delete($id, $editorRepository);
 
             return $this->json(['message' => 'Editor deleted successfully'], 200);
         } catch (\Exception $e) {
