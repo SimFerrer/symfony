@@ -11,7 +11,7 @@ class BookControllerTest extends WebTestCase
 
     private EntityManagerInterface $entityManager;
 
-    
+
 
 
     public function testIndex(): void
@@ -37,7 +37,7 @@ class BookControllerTest extends WebTestCase
         $user->setFirstname('prénom');
         $user->setLastname('nom de famille');
         $user->setRoles(['ROLE_AJOUT_DE_LIVRE', 'ROLE_EDITION_DE_LIVRE']);
-        $user->setPassword('faezfaezgfafazfz1!'); // Dans un test, vous n'avez pas besoin de hacher le mot de passe
+        $user->setPassword('faezfaezgfafazfz1!');
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
@@ -46,17 +46,14 @@ class BookControllerTest extends WebTestCase
     }
 
     protected function tearDown(): void
-{
-    // Supprimer les utilisateurs persistés pour éviter les conflits
-    //$this->entityManager = static::getContainer()->get('doctrine')->getManager();
-    $userRepository = $this->entityManager->getRepository(User::class);
-    $users = $userRepository->findBy(['email' => 'test@test.fr']);
-    foreach ($users as $user) {
-        $this->entityManager->remove($user);
+    {
+        $userRepository = $this->entityManager->getRepository(User::class);
+        $users = $userRepository->findBy(['email' => 'test@test.fr']);
+        foreach ($users as $user) {
+            $this->entityManager->remove($user);
+        }
+        $this->entityManager->flush();
+
+        parent::tearDown();
     }
-    $this->entityManager->flush();
-
-    parent::tearDown();
-}
-
 }

@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Author;
 use App\Form\AuthorType;
+use App\Repository\AuthorRepository;
 use App\Service\AuthorService;
 use App\Service\PaginationService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -17,7 +18,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class AuthorController extends AbstractController
 {
     #[Route('', name: 'app_admin_author')]
-    public function index(Request $request, AuthorService $authorService, PaginationService $paginationService): Response
+    public function index(Request $request, AuthorService $authorService, PaginationService $paginationService, AuthorRepository $authorRepository): Response
     {
         try {
             $dates = [];
@@ -27,7 +28,7 @@ class AuthorController extends AbstractController
             if ($request->query->has('end')) {
                 $dates['end'] = $request->query->get('end');
             }
-            $authors = $authorService->getAuthorAll($request->query->getInt('page', 1), $paginationService, $dates);
+            $authors = $authorService->getAll($dates, $request->query->getInt('page', 1), $paginationService, $authorRepository);
             return $this->render('admin/author/index.html.twig', [
                 'controller_name' => 'AuthorController',
                 'authors' => $authors,

@@ -18,9 +18,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class EditorController extends AbstractController
 {
     #[Route('', name: 'app_admin_editor', methods: ['GET'])]
-    public function index(Request $request, EditorService $editorService, PaginationService $paginationService): Response
+    public function index(Request $request, EditorService $editorService, PaginationService $paginationService, EditorRepository $editorRepository): Response
     {
-        $editors = $editorService->getEditorAll($request->query->getInt('page', 1), $paginationService);
+        $editors = $editorService->getAll(null, $request->query->getInt('page', 1), $paginationService, $editorRepository);
         return $this->render('admin/editor/index.html.twig', [
             'controller_name' => 'EditorController',
             'editors' => $editors
