@@ -55,15 +55,12 @@ class AuthorController extends AbstractController
     public function create(Request $request, AuthorService $authorService)
     {
         try {
-            // Appeler le service pour créer un livre
             $author = $authorService->create($request->getContent());
 
-            // Retourner la réponse
             return $this->json($author, 201, [], [
                 'groups' => ['authors.edit']
             ]);
         } catch (\Exception $e) {
-            // Gestion des erreurs
             return $this->json(['error' => $e->getMessage()], 400);
         }
     }
